@@ -22,6 +22,7 @@ This directory is designed to become the root of a separate device repository, k
 - `DRIVER_MATRIX.md`: status and evidence for each subsystem.
 - `drivers/`: real device-specific driver implementations, once supported by evidence.
 - `docs/HARDWARE_INVENTORY.md`: source-backed hardware identification.
+- `docs/PORTING_TO_ANOTHER_DEVICE.md`: workflow for adapting this project to another phone.
 - `tests/`: reproducible build and hardware test plans.
 
 ## Status vocabulary
