@@ -1,0 +1,60 @@
+project: iDroid-G60-Moto-G60-Port
+device:
+  vendor: Motorola
+  product: Moto G60
+  codename:
+    value: hanoip
+    status: reported-needs-verification
+  model_variant: unknown
+  board_revision: unknown
+  soc:
+    value: Qualcomm SM7150-AC / Snapdragon 732G
+    status: reported-needs-verification
+  cpu:
+    value: unknown
+    status: needs-device-specific-verification
+  gpu:
+    value: Qualcomm Adreno 618
+    status: reported-needs-verification
+  display:
+    panel: unknown
+    controller: unknown
+  touchscreen:
+    controller: unknown
+  storage:
+    type: unknown
+    controller: unknown
+  wireless:
+    wifi_chip: unknown
+    bluetooth:
+      status: disabled
+      reason: initial-project-scope
+  audio:
+    codec: unknown
+    dsp: unknown
+  cameras:
+    sensors: unknown
+    isp: unknown
+support:
+  boot: not-implemented
+  xnu: not-ported
+  display: not-started
+  touchscreen: not-started
+  storage: not-started
+  gpu: not-started
+  wifi: not-started
+  audio: not-started
+  camera: not-started
+  battery: not-started
+  thermal: not-started
+  usb: not-started
+  buttons: not-started
+  haptics: not-started
+firmware:
+  proprietary_blobs_committed: false
+  redistribution_review: not-started
+notes:
+  - Reported hardware identifiers are research leads, not verified board facts.
+  - Identify the exact retail model and board revision before driver development.
+  - Do not infer register maps, interrupts, clocks, regulators or firmware protocols from another phone.
+  - No driver is considered working without reproducible physical-device evidence.
