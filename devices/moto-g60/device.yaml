@@ -1,0 +1,38 @@
+project: iDroid-G60
+device:
+  vendor: Motorola
+  product: Moto G60
+  model_variant: unknown
+  board_revision: unknown
+  codename:
+    value: hanoip
+    status: reported-needs-verification
+  soc:
+    value: Qualcomm Snapdragon 732G
+    status: reported-needs-verification
+  cpu:
+    value: ARM64-capable Qualcomm Kryo family
+    status: reported-needs-verification
+  gpu:
+    value: Qualcomm Adreno 618
+    status: reported-needs-verification
+support:
+  boot: not-implemented
+  xnu: not-ported
+  display: unknown
+  touchscreen: unknown
+  wifi: unknown
+  audio: unknown
+  battery: unknown
+  power_management: unknown
+  buttons: unknown
+  storage: unknown
+  bluetooth:
+    status: disabled
+    reason: initial-project-scope
+firmware:
+  proprietary_blobs_committed: false
+  manifest_status: not-started
+notes:
+  - Values marked reported are research leads, not verified board facts.
+  - Do not infer hardware addresses or firmware interfaces from other devices.
