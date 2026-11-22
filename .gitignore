@@ -1,68 +1,66 @@
-# Prerequisites
-*.d
+# Build output
+/build/
+/build-*/
+/out/
+/dist/
+/artifacts/
 
-# Compiled Object files
-*.slo
-*.lo
+# Compiled objects and libraries
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
 *.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.elf
+*.bin
+*.img
+*.dtb
+*.dwo
 
-# Executables
-*.exe
-*.out
-*.app
-
-# Build directories
-[Bb]uild/
-[Bb]uild-*/
-cmake-build-*/
-
-# CMake generated files
+# CMake and Ninja
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-Makefile
 install_manifest.txt
 compile_commands.json
+.ninja_deps
+.ninja_log
+.ninja_*
+cmake-build-*/
 
-# Temporary files
-*.tmp
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Logs and temporary files
 *.log
+*.tmp
 *.bak
 *.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
-Testing/
+*.orig
 .cache/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+
+# Local tool and emulator state
+.local/
+.qemu/
+*.qcow2
+*.vdi
+*.vmdk
+
+# Keep manifests, source files, configuration, and documentation tracked.
+# Do not add proprietary firmware, device dumps, keys, or personal data.
