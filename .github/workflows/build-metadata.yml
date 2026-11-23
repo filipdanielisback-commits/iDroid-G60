@@ -1,0 +1,21 @@
+name: Build metadata checks
+
+on:
+  push:
+    branches:
+      - device-port-bootstrap
+  pull_request:
+    branches:
+      - device-port-bootstrap
+
+permissions:
+  contents: read
+
+jobs:
+  validate-build-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Validate pinned XNU metadata and fetch script syntax
+        run: make validate
