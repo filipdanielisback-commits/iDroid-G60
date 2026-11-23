@@ -1,0 +1,10 @@
+# Pinned Apple XNU source baseline.
+# This is a source identity, not a claim of Moto G60 compatibility or a successful build.
+XNU_REPOSITORY="https://github.com/apple-oss-distributions/xnu.git"
+XNU_TAG="xnu-12377.121.6"
+XNU_COMMIT="ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+
+# HakiOS reference snapshot inspected when selecting this candidate.
+# We do not import its board configuration or patches into this project.
+HAKIOS_REFERENCE_REPOSITORY="https://github.com/oosexgang/hakios-xnu-kernel"
+HAKIOS_REFERENCE_COMMIT="62e09f850f1f713192228cb9031da256033ede93"
