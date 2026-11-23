@@ -5,8 +5,6 @@ on:
     branches:
       - device-port-bootstrap
   pull_request:
-    branches:
-      - device-port-bootstrap
 
 permissions:
   contents: read
