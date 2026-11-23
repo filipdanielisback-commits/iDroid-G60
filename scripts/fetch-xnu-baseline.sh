@@ -40,7 +40,12 @@ if [[ "$actual_commit" != "$XNU_COMMIT" ]]; then
   exit 1
 fi
 
-git -C "$SOURCE_DIR" checkout --detach --force "$XNU_COMMIT"
+if [[ -n "$(git -C "$SOURCE_DIR" status --porcelain)" ]]; then
+  echo "error: $SOURCE_DIR has local changes; preserve or clean them before switching revisions" >&2
+  exit 1
+fi
+
+git -C "$SOURCE_DIR" checkout --detach "$XNU_COMMIT"
 checked_out="$(git -C "$SOURCE_DIR" rev-parse HEAD)"
 [[ "$checked_out" == "$XNU_COMMIT" ]] || {
   echo "error: checkout verification failed ($checked_out)" >&2
