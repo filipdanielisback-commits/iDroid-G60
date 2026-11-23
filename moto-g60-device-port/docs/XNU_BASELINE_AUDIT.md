@@ -1,77 +1,87 @@
 # XNU baseline audit
 
-Audit date: 2026-11-22
+Audit update: 2026-11-23
 
-Status: **source identity verified; target-platform compatibility not yet established.** No build or boot was performed.
+Status: **candidate Apple source revision verified and pinned; Moto G60 compatibility and our build environment remain unverified.** The source-fetch script has not yet been run. No kernel compile or boot has been performed by this project.
 
-## 1. HakiOS source baseline
+## 1. Candidate Apple XNU source
 
-The inspected HakiOS `main` source tree explicitly identifies Apple's XNU release as `xnu-8796.121.2`.
+The newer inspected HakiOS snapshot is pinned at:
+- HakiOS repository: https://github.com/oosexgang/hakios-xnu-kernel
+- HakiOS reference commit: `62e09f850f1f713192228cb9031da256033ede93`
+- Apple XNU tag: `xnu-12377.121.6`
+- Apple XNU commit: `ac9718fb1af618d5ce8678d0dc6e8a58f252216f`
 
-Its `xnu/apply.sh` pins both:
-- Tag: `xnu-8796.121.2`
-- Expected Apple commit: `c54f35ca767986246321eb901baf8f5ff7923f6a`
+The Apple commit was independently fetched from the official `apple-oss-distributions/xnu` repository. Its commit message identifies `xnu-12377.121.6`.
 
-The Apple GitHub commit endpoint independently confirms that this exact commit exists in `apple-oss-distributions/xnu` and its commit message is `xnu-8796.121.2`. This verifies the release identity used by the inspected HakiOS script.
-
-## 2. Architecture and SDK alignment
-
-The inspected HakiOS build scripts specify:
-- XNU architecture: `ARM64`
-- SDK: `iPhoneOS16.5.sdk`
-- SDK version: `16.5`
-- Kernel configuration: `DEVELOPMENT`
-- XNU source directory: `xnu-src/xnu-8796.121.2`
-
-Apple's XNU repository describes XNU as a Mach/BSD/IOKit kernel with ARM64 support. The target Moto G60's Snapdragon 732G is an ARM64 Qualcomm platform, so the CPU architecture is a plausible match. That fact alone does not establish board, SoC, firmware, or peripheral compatibility.
-
-## 3. Important platform configuration issue
-
-HakiOS's inspected `xnu-build.sh` invokes the XNU build with:
+Our repository records this as a **candidate source baseline**, not a validated iOS 27.2 system or a Moto G60-ready kernel. The lock file is `build/XNU_BASELINE.lock`; the fetch/verification script is `scripts/fetch-xnu-baseline.sh`. Run it with:
 
 ```sh
-MACHINE_CONFIGS=${MACHINE:-BCM2837}
+bash scripts/fetch-xnu-baseline.sh
 ```
 
-The inspected `xnu-env.sh` does not set `MACHINE`, so the default in that script is `BCM2837`. HakiOS's patch also refers to the ARM64 BCM2837 master configuration.
+It checks the tag resolves to the pinned commit and refuses to switch a checkout with local changes. It only fetches source; it does not patch, configure, compile or boot XNU.
 
-This is a concrete item to resolve before treating the upstream build command as a valid Moto G60 build recipe. We must understand which XNU machine/platform configuration HakiOS intends to use, how its Qualcomm support is wired in, and whether a proper SM7150 platform configuration is required. Do not assume that a Raspberry Pi-named machine configuration is suitable for the Moto G60.
+The earlier HakiOS snapshot used XNU `xnu-8796.121.2`, commit `c54f35ca767986246321eb901baf8f5ff7923f6a`. That older baseline is retained here as historical research, not the current candidate.
 
-## 4. SoC and device configuration are not interchangeable
+## 2. HakiOS build information and limits
 
-The HakiOS reference device repository is the POCO X5 Pro / SM7325 (SC7280 family). Its SoC-specific addresses, clocks, interrupt routing, memory map, power rails, firmware interfaces and drivers are not transferable to the Moto G60 merely because both devices use Qualcomm ARM64 hardware.
+The inspected HakiOS commit's `Documentation/building.md`, `kernel/build.sh`, and `build.config.arm64` describe:
+- XNU architecture: plain `arm64`
+- Kernel configuration: `DEVELOPMENT`
+- Machine configuration: `BCM2837`
+- SDK: iPhoneOS 16.5
+- Build and dependency assembly through HakiOS-specific overlay, patch and host-tool scripts
+- QEMU testing through HakiOS's own workbench
 
-The Moto G60 target is SM7150-AC. A separate SM7150 device entry such as HakiOS's `sweet` listing may be useful for comparison, but it is not proof of XT2135-2 support. Exact board and peripheral differences still need evidence.
+This is a build recipe for that HakiOS source tree and its patches. It is **not** a generic recipe for unmodified Apple XNU, and it is not an SM7150-AC or `hanoip` configuration. We must not copy its machine configuration, patches, SDK assumptions or device drivers into our project without a separate compatibility review.
 
-HakiOS's porting guide requires a device-specific configuration and starts with other phone drivers excluded. That is the correct principle for our port: do not enable another device's display, touch, storage, camera, audio, Wi-Fi or power drivers on the Moto G60 without verifying their hardware targets.
+In particular, the HakiOS documentation's use of an iPhoneOS 16.5 SDK does not by itself prove compatibility with the desired iOS release. Kernel source revision, SDK headers, ABI and user-space release are separate versioning questions.
 
-## 5. Open-kernel test path
+## 3. Moto G60 target facts
 
-HakiOS's Makefile documents `make qemu-open` as a kernel + placeholder loader + minimal raw-syscall test program path that does not require Apple's proprietary system software. This is a useful upstream test concept.
+- Device: Motorola Moto G60 XT2135-2
+- Codename: `hanoip`
+- SoC: Qualcomm SM7150-AC / Snapdragon 732G
+- GPU: Adreno 618
+- CPU architecture: ARM64
 
-It is not evidence that this repository can already build or boot XNU. Before attempting the build, we still need to pin the exact HakiOS commit (the inspected `main` branch is mutable), inspect its dependency scripts and licences, and confirm that the selected QEMU machine and toolchain are available.
+ARM64 is a necessary architecture match, not proof of platform compatibility. The POCO X5 Pro / SM7325 (SC7280-family) reference device is not interchangeable with SM7150-AC. Even a shared SoC family would not establish board-level compatibility.
 
-## 6. Baseline decision
+## 4. Unresolved build decisions
 
-**Candidate baseline for further compatibility work:** Apple XNU `xnu-8796.121.2`, commit `c54f35ca767986246321eb901baf8f5ff7923f6a`, with the matching HakiOS patch set only after its exact HakiOS source commit is pinned and reviewed.
+Before creating a real compile command, we must establish:
+1. The host operating system and supported compiler/linker toolchain.
+2. The exact SDK and host utilities required for the selected XNU revision.
+3. Whether the intended first build is a generic QEMU reference kernel or a device-target kernel.
+4. The machine/platform configuration required for that QEMU target.
+5. Which upstream patches are essential to build and which are HakiOS-specific.
+6. How the eventual SM7150-AC platform configuration differs from the QEMU-only configuration.
 
-**Not approved as a Moto G60 build configuration yet.** The machine/platform configuration, Qualcomm SM7150 support, loader/UEFI assumptions, and target-specific driver boundary remain unresolved.
+Do not set `MACHINE_CONFIGS=BCM2837` and label the result a Moto G60 build. A QEMU-only result must be labelled as such.
 
-## 7. Next read-only engineering tasks
+## 5. Milestones and evidence
 
-1. Pin the HakiOS repository to an exact commit and record the hashes of `xnu/hakios.patch`, `xnu/apply.sh`, `xnu-build.sh`, and the relevant configuration files.
-2. Trace the `MACHINE_CONFIGS` setting through XNU's configuration system and identify the platform configuration actually required for Qualcomm ARM64.
-3. Compare the SM7150 reference configuration and its device-tree-derived SoC data with the Moto G60's own documented hardware.
-4. Inventory which HakiOS patches and drivers are common kernel changes versus SC7280/POCO-specific code.
-5. Only after the above review, plan a reproducible open-kernel QEMU build. Do not use a physical phone as the first build test.
+| Milestone | Required evidence |
+|---|---|
+| Source fetched | Script output showing tag and exact commit |
+| Toolchain identified | Host OS, compiler/linker versions, SDK identity and checksums where available |
+| Build configuration selected | Source-backed explanation of architecture, machine/platform and kernel config |
+| Kernel compiles | Full reproducible command, exit status, build log and artifact hash |
+| QEMU boot | Captured console log showing kernel entry and early initialization |
+| Moto G60 boot | Exact XT2135-2 identification and repeatable device logs |
+| Driver works | Subsystem-specific tests on the actual target hardware |
 
-## Sources
+A source checkout is not a kernel build. A successful compile is not a boot. A QEMU boot is not Moto G60 hardware support.
+
+## References
 
 - Apple XNU repository: https://github.com/apple-oss-distributions/xnu
-- Verified Apple XNU commit: https://github.com/apple-oss-distributions/xnu/commit/c54f35ca767986246321eb901baf8f5ff7923f6a
-- HakiOS source: https://github.com/oosexgang/hakios-xnu-kernel
-- HakiOS XNU apply script: https://github.com/oosexgang/hakios-xnu-kernel/blob/main/xnu/apply.sh
-- HakiOS XNU build script: https://github.com/oosexgang/hakios-xnu-kernel/blob/main/xnu-build.sh
-- HakiOS XNU dependency setup: https://github.com/oosexgang/hakios-xnu-kernel/blob/main/xnu-deps/setup.sh
-- HakiOS device porting guide: https://github.com/oosexgang/hakios-xnu-kernel/blob/main/docs/porting/index.md
-- HakiOS repository layout: https://github.com/oosexgang/hakios-xnu-kernel/blob/main/docs/porting/repositories.md
+- Candidate Apple XNU commit: https://github.com/apple-oss-distributions/xnu/commit/ac9718fb1af618d5ce8678d0dc6e8a58f252216f
+- Earlier Apple XNU commit: https://github.com/apple-oss-distributions/xnu/commit/c54f35ca767986246321eb901baf8f5ff7923f6a
+- Pinned HakiOS reference snapshot: https://github.com/oosexgang/hakios-xnu-kernel/commit/62e09f850f1f713192228cb9031da256033ede93
+- HakiOS build documentation: https://github.com/oosexgang/hakios-xnu-kernel/blob/62e09f850f1f713192228cb9031da256033ede93/Documentation/building.md
+
+## Scope and safety
+
+This is an independent XNU/Darwin research port, not Apple's complete proprietary iOS. Do not include proprietary Apple system images, private keys, certificates, activation data or unlicensed vendor firmware. Do not attempt physical-device flashing or boot-chain changes as part of the source-baseline milestone.
