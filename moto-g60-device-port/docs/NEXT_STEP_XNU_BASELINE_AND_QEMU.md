@@ -1,6 +1,6 @@
 # Next step: XNU baseline and compatibility audit
 
-Status: source identity verified; target-platform compatibility not established. No kernel build or device boot has been completed.
+Status: candidate source identity pinned; target-platform compatibility not established. The source-fetch script has not yet been run, and no kernel build or device boot has been completed.
 
 ## Target
 
