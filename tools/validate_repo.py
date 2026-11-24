@@ -10,6 +10,9 @@ REQUIRED_FILES = [
     "docs/architecture.md", "docs/roadmap.md", "docs/hardware-inventory.md",
     "devices/moto-g60/device.yaml", "platforms/qemu-arm64/README.md",
     "drivers/bluetooth/README.md",
+    "Makefile", "boot/qemu-arm64/start.S",
+    "boot/qemu-arm64/linker.ld", "kernel/bringup/main.c",
+    "docs/qemu-arm64-bringup.md", ".github/workflows/arm64-qemu.yml",
 ]
 
 missing = [path for path in REQUIRED_FILES if not (ROOT / path).is_file()]
