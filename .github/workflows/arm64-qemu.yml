@@ -1,0 +1,44 @@
+name: ARM64 QEMU bring-up
+
+on:
+  push:
+    branches: [main, "work/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang lld make python3 qemu-system-arm
+
+      - name: Validate repository
+        run: make check
+
+      - name: Build ARM64 payload
+        run: make arm64
+
+      - name: Run QEMU serial smoke test
+        shell: bash
+        run: |
+          set +e
+          timeout 5s make qemu > qemu-smoke.log 2>&1
+          status=$?
+          set -e
+          cat qemu-smoke.log
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            echo "QEMU exited unexpectedly with status $status"
+            exit "$status"
+          fi
+          grep -F "iDroid-G60 ARM64 QEMU bring-up: PASS" qemu-smoke.log
