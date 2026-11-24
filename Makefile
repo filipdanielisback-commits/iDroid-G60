@@ -5,6 +5,8 @@ PYTHON ?= python3
 CLANG ?= clang
 LLD ?= ld.lld
 QEMU ?= qemu-system-aarch64
+XNU_SOURCE ?= ../xnu-8796.121.2
+XNU_TAG ?= xnu-8796.121.2
 
 TARGET := --target=aarch64-none-elf
 ARCH_FLAGS := -mcpu=cortex-a57 -mgeneral-regs-only
@@ -15,19 +17,23 @@ C_FLAGS := $(COMMON_FLAGS) -std=c11
 ASM_FLAGS := $(COMMON_FLAGS)
 ELF := $(BUILD_DIR)/idroid-qemu.elf
 
-.PHONY: all help check arm64 qemu clean
+.PHONY: all help check xnu-check arm64 qemu clean
 
 all: check arm64
 
 help:
 	@echo "iDroid-G60 development targets:"
-	@echo "  make check   - validate required project files"
-	@echo "  make arm64   - compile the freestanding ARM64 QEMU test payload"
-	@echo "  make qemu    - run the test payload on QEMU's generic virt machine"
-	@echo "  make clean   - remove generated build output"
+	@echo "  make check      - validate required project files"
+	@echo "  make arm64      - compile the freestanding ARM64 QEMU test payload"
+	@echo "  make qemu       - run the test payload on QEMU's generic virt machine"
+	@echo "  make xnu-check  - verify a separate, pristine upstream XNU checkout"
+	@echo "  make clean      - remove generated build output"
 
 check:
 	$(PYTHON) tools/validate_repo.py
+
+xnu-check:
+	$(PYTHON) tools/check_xnu_source.py --source "$(XNU_SOURCE)" --tag "$(XNU_TAG)"
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
