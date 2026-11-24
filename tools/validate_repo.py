@@ -8,10 +8,13 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_FILES = [
     "README.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md",
     "docs/architecture.md", "docs/roadmap.md", "docs/hardware-inventory.md",
+    "docs/xnu-qemu-feasibility.md",
     "devices/moto-g60/device.yaml", "platforms/qemu-arm64/README.md",
     "drivers/bluetooth/README.md",
     "Makefile", "boot/qemu-arm64/start.S",
     "boot/qemu-arm64/linker.ld", "kernel/bringup/main.c",
+    "kernel/xnu/README.md", "boot/xnuloader/README.md",
+    "userland/darwin/README.md", "tools/check_xnu_source.py",
     "docs/qemu-arm64-bringup.md", ".github/workflows/arm64-qemu.yml",
 ]
 
@@ -25,6 +28,13 @@ if missing:
 manifest = (ROOT / "devices/moto-g60/device.yaml").read_text(encoding="utf-8")
 if "not-implemented" not in manifest or "status: disabled" not in manifest:
     print("Device manifest must explicitly record current support status.")
+    sys.exit(1)
+
+checker = ROOT / "tools/check_xnu_source.py"
+try:
+    compile(checker.read_text(encoding="utf-8"), str(checker), "exec")
+except SyntaxError as error:
+    print(f"XNU source checker has invalid Python syntax: {error}")
     sys.exit(1)
 
 print(f"Repository structure check passed ({len(REQUIRED_FILES)} required files).")
