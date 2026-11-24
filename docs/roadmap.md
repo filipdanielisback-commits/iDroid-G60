@@ -12,26 +12,50 @@
 
 ## Milestone 002 — ARM64 emulation research
 
+- [x] Add a freestanding ARM64 payload and reproducible build target.
+- [x] Document the QEMU virt experiment and its limitations.
+- [ ] Confirm the QEMU runtime test in CI and retain its serial log.
 - [ ] Record host and toolchain versions.
-- [ ] Confirm QEMU ARM64 `virt` environment setup.
-- [ ] Build and run a tiny non-OS ARM64 test payload or a suitable educational kernel exercise.
-- [ ] Capture logs and reproducible test steps.
-- [ ] Document what this proves and what it does not prove about XNU.
+- [ ] Capture a reproducible runtime result.
 
-## Milestone 003 — XNU feasibility study
+## Milestone 003 — XNU feasibility and source baseline
 
-- [ ] Review upstream XNU build targets and supported platforms.
-- [ ] Document required platform abstractions.
-- [ ] Identify an appropriate research branch and patch policy.
-- [ ] Do not claim a successful build until logs and artifacts are reviewed.
+- [x] Identify HakiOS's documented XNU reference tag: xnu-8796.121.2.
+- [x] Document the upstream-source boundary and license-preservation rules.
+- [x] Add a local checker for a pristine upstream XNU checkout.
+- [ ] Review upstream XNU ARM64 build targets and dependencies.
+- [ ] Identify the platform code needed for QEMU virt.
+- [ ] Define a patch policy and keep project changes separate from upstream.
+- [ ] Build XNU only after the platform and toolchain review.
 
-## Milestone 004 — Moto G60 platform feasibility
+## Milestone 004 — QEMU XNU loader and kernel boot
+
+- [x] Document the intended UEFI -> loader -> XNU architecture.
+- [ ] Specify the loader-to-kernel entry contract and memory map.
+- [ ] Implement an independent QEMU loader.
+- [ ] Add the QEMU platform layer and required virtual-device support.
+- [ ] Build XNU for the QEMU target.
+- [ ] Boot XNU in QEMU and capture a serial log.
+
+## Milestone 005 — Darwin user space and graphical boot
+
+- [x] Document the separate, user-supplied Darwin image boundary.
+- [ ] Define a local-only image layout and validation workflow.
+- [ ] Start the Darwin user-space process handoff.
+- [ ] Validate essential user-space services.
+- [ ] Add display support and graphical services.
+- [ ] Demonstrate a graphical Darwin user-space boot in QEMU.
+
+## Milestone 006 — Moto G60 platform feasibility
 
 - [ ] Verify exact device variant and board revision.
 - [ ] Build a source-backed hardware inventory.
 - [ ] Map documented boot and hardware interfaces.
 - [ ] Review recovery and device-safety constraints before any physical-device work.
+- [ ] Reassess XNU platform fit after QEMU milestones are demonstrated.
 
 ## Later milestones
 
-Driver implementation, userland, and any physical-device experiments remain blocked on the feasibility work above. No release date or bootability promise is made.
+Driver implementation and any physical-device experiments remain blocked on
+the feasibility work above. QEMU success does not prove Moto G60 compatibility.
+No release date or bootability promise is made.

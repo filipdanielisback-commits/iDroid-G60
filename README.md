@@ -42,6 +42,23 @@ iDroid-G60 is an independent research project exploring what it would take to br
 
 See [development setup](docs/development-setup.md), [Windows + WSL2](docs/setup-windows-wsl2.md), and [Ubuntu](docs/setup-ubuntu.md).
 
+## First compiled-code experiment
+
+The repository now includes a small freestanding ARM64 test payload for QEMU's
+generic `virt` machine. It prints a serial-console marker and is built by the
+root Makefile:
+
+```sh
+make check
+make arm64
+make qemu
+```
+
+This is a build-system and ARM64 execution experiment only. It is **not XNU,
+Darwin, iOS, or a Moto G60 boot image**. See
+[the QEMU bring-up notes](docs/qemu-arm64-bringup.md). GitHub Actions also
+builds the payload and checks its QEMU serial output.
+
 ## First milestone
 
 Milestone 001 is complete only when the repository structure, documentation, hardware inventory process, and validation checks are reviewed. See [the roadmap](docs/roadmap.md).
